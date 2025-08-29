@@ -1,140 +1,138 @@
-# go-openapi
+# go-oas
 
-<img align="right" width="180px" src="https://raw.githubusercontent.com/leandroluk/go-openapi/refs/heads/master/assets/go-openapi.png">
+<img align="right" width="180px" src="https://raw.githubusercontent.com/leandroluk/go-oas/refs/heads/main/assets/go-oas.png">
 
-[![Build Status](https://github.com/leandroluk/go-openapi/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/leandroluk/go-openapi/actions)  
-[![Coverage Status](https://img.shields.io/codecov/c/github/leandroluk/go-openapi/main.svg)](https://codecov.io/gh/leandroluk/go-openapi)  
-[![Go Report Card](https://goreportcard.com/badge/github.com/leandroluk/go-openapi)](https://goreportcard.com/report/github.com/leandroluk/go-openapi)  
-[![Go Doc](https://godoc.org/github.com/leandroluk/go-openapi?status.svg)](https://pkg.go.dev/github.com/leandroluk/go-openapi)  
-[![Release](https://img.shields.io/github/release/leandroluk/go-openapi.svg?style=flat-square)](https://github.com/leandroluk/go-openapi/releases)  
+[![Build Status](https://github.com/leandroluk/go-oas/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/leandroluk/go-oas/actions)  
+[![Coverage Status](https://img.shields.io/codecov/c/github/leandroluk/go-oas/main.svg)](https://codecov.io/gh/leandroluk/go-oas)  
+[![Go Report Card](https://goreportcard.com/badge/github.com/leandroluk/go-oas)](https://goreportcard.com/report/github.com/leandroluk/go-oas)  
+[![Go Doc](https://godoc.org/github.com/leandroluk/go-oas?status.svg)](https://pkg.go.dev/github.com/leandroluk/go-oas)  
+[![Release](https://img.shields.io/github/release/leandroluk/go-oas.svg?style=flat-square)](https://github.com/leandroluk/go-oas/releases)  
 
-A schema description & validation library for Go, inspired by [hapi/joi](https://github.com/hapijs/joi).
-
----
-
-## Contents
-- [go-openapi](#go-openapi)
-  - [Contents](#contents)
-  - [Getting started](#getting-started)
-  - [Usage](#usage)
-  - [Available Schemas](#available-schemas)
-  - [Examples](#examples)
-    - [String Validation](#string-validation)
-    - [Number Validation](#number-validation)
-    - [Boolean Validation](#boolean-validation)
-    - [Object Validation](#object-validation)
-  - [Implementation Status](#implementation-status)
-  - [About the Project](#about-the-project)
-  - [Contributors](#contributors)
-  - [License](#license)
+Uma biblioteca em Go para **modelagem, serialização e construção de documentos OpenAPI 3.1**, com suporte a `$ref`, schemas JSON, builders fluentes e integração com **Gin**.
 
 ---
 
-## Getting started
-
-1. Install the package:
+## Instalação
 
 ```sh
-go get github.com/leandroluk/go-openapi
+go get github.com/leandroluk/go-oas
 ```
 
-2. Import it in your project:
+---
+
+## Exemplo Rápido
 
 ```go
-import "github.com/leandroluk/go-openapi"
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    oas "github.com/leandroluk/go-oas/v3_1"
+)
+
+func main() {
+    b := oas.NewBuilder().
+        Info("API Example", "1.0.0").
+        Path("/items").
+        Get().
+            Summary("Lista itens").
+            Response(200, "ok", oas.SchemaOrRef{
+                Schema: &oas.Schema{Type: &oas.StringOrStringArray{One: oas.Ptr("string")}},
+            }).
+            Done().
+        Done()
+
+    doc := b.Build()
+    data, _ := json.MarshalIndent(doc, "", "  ")
+    fmt.Println(string(data))
+}
 ```
 
-3. Create and validate schemas:
+Saída (resumida):
+
+```json
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API Example",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/items": {
+      "get": {
+        "summary": "Lista itens",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "application/json": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+---
+
+## Integração com Gin
 
 ```go
-schema := joi.Object(map[string]joi.Schema{
-    "username": joi.String().Min(3).Max(20).Required(),
-    "age":      joi.Number().Min(18).Required(),
-    "email":    joi.String().Regex(regexp.MustCompile(`.+@.+\..+`)),
+import "github.com/gin-gonic/gin"
+
+r := gin.Default()
+
+r.GET("/items", func(c *gin.Context) {
+    c.JSON(200, []string{"item1", "item2"})
 })
 
-value := map[string]any{
-    "username": "john_doe",
-    "age":      25,
-    "email":    "john@example.com",
-}
-
-parsed, errs := schema.Validate("user", value)
-if len(errs) > 0 {
-    fmt.Println("Validation failed:", errs)
-} else {
-    fmt.Println("Validation passed:", parsed)
-}
+// Em paralelo você pode expor o documento OpenAPI:
+r.GET("/openapi.json", func(c *gin.Context) {
+    doc := b.Build()
+    c.JSON(200, doc)
+})
 ```
 
 ---
 
-## Usage
+## Estrutura do Projeto
 
-- **Basic types**: `String`, `Number`, `Boolean`, `Object`
-- **Rules**:  
-  - String: `.Min()`, `.Max()`, `.Regex()`, `.Trim()`, `.Lowercase()`, `.Uppercase()`  
-  - Number: `.Min()`, `.Max()`, `.Integer()`, `.Positive()`, `.Negative()`  
-  - Boolean: `.True()`, `.False()`, `.Truthy()`, `.Falsy()`  
-  - Object: `.Min()`, `.Max()`, `.Length()`, `.Unknown()`  
-
----
-
-## Available Schemas
-- ✅ String
-- ✅ Number
-- ✅ Boolean
-- ✅ Object
-- ⬜ Array *(coming soon)*
-
----
-
-## Examples
-
-### String Validation
-```go
-joi.String().Min(5).Max(10).Trim()
 ```
-
-### Number Validation
-```go
-joi.Number().Integer().Positive()
-```
-
-### Boolean Validation
-```go
-joi.Boolean().Truthy("yes", "1").Falsy("no", "0")
-```
-
-### Object Validation
-```go
-joi.Object(map[string]joi.Schema{
-    "id":   joi.Number().Required(),
-    "name": joi.String().Min(3),
-}).Unknown(false)
+v3_1/
+  builder.go    # Builder fluente para criar documentos OAS
+  struct.go     # Definições das structs OpenAPI 3.1
+v3_1_test/
+  builder_test.go
+  struct_test.go
 ```
 
 ---
 
-## Implementation Status
-- [x] String rules
-- [x] Number rules
-- [x] Boolean rules
-- [x] Object rules
-- [ ] Array rules
-- [ ] Custom extensions
+## Testes
+
+```sh
+make test       # roda os testes sem cobertura
+make test.ci    # roda os testes com cobertura
+make test.html  # abre o relatório de cobertura
+```
 
 ---
 
-## About the Project
-This project was inspired by [joi](https://github.com/hapijs/joi) for Node.js and aims to bring a similar developer experience to Go.
+## Status
+
+- ✅ Suporte completo ao OpenAPI 3.1 (Document, Schema, Components, Paths, etc.)  
+- ✅ Builders fluentes para criar specs programaticamente  
+- ✅ Integração simples com Gin  
+- ✅ 100% de cobertura de testes em `struct.go`  
+- 🚧 Futuro: suporte às versões 2.0 e 3.0 para migração de specs
 
 ---
 
-## Contributors
-Thanks to all the people who contribute! [[Contribute](CONTRIBUTING.md)]
+## Licença
 
----
-
-## License
-MIT License – see [LICENSE](LICENSE) file for details.
+MIT © [Leandro Luk](https://github.com/leandroluk)
