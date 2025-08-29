@@ -1,9 +1,9 @@
 # go-oas
 
-<img align="right" width="180px" src="https://raw.githubusercontent.com/leandroluk/go-oas/refs/heads/main/assets/go-oas.png">
+<img align="right" width="180px" src="https://raw.githubusercontent.com/leandroluk/go-oas/refs/heads/master/assets/go-oas.png">
 
-[![Build Status](https://github.com/leandroluk/go-oas/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/leandroluk/go-oas/actions)  
-[![Coverage Status](https://img.shields.io/codecov/c/github/leandroluk/go-oas/main.svg)](https://codecov.io/gh/leandroluk/go-oas)  
+[![Build Status](https://github.com/leandroluk/go-oas/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/leandroluk/go-oas/actions)  
+[![Coverage Status](https://img.shields.io/codecov/c/github/leandroluk/go-oas/master.svg)](https://codecov.io/gh/leandroluk/go-oas)  
 [![Go Report Card](https://goreportcard.com/badge/github.com/leandroluk/go-oas)](https://goreportcard.com/report/github.com/leandroluk/go-oas)  
 [![Go Doc](https://godoc.org/github.com/leandroluk/go-oas?status.svg)](https://pkg.go.dev/github.com/leandroluk/go-oas)  
 [![Release](https://img.shields.io/github/release/leandroluk/go-oas.svg?style=flat-square)](https://github.com/leandroluk/go-oas/releases)  
