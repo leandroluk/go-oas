@@ -155,12 +155,12 @@ type Document struct {
 // Info
 type Info struct {
 	Title          string   `json:"title"`
+	Version        string   `json:"version"`
 	Summary        *string  `json:"summary,omitempty"`
 	Description    *string  `json:"description,omitempty"`
 	TermsOfService *string  `json:"termsOfService,omitempty"`
 	Contact        *Contact `json:"contact,omitempty"`
 	License        *License `json:"license,omitempty"`
-	Version        string   `json:"version"`
 }
 
 type Contact struct {
@@ -169,10 +169,26 @@ type Contact struct {
 	Email *string `json:"email,omitempty"`
 }
 
+func NewContact(name string, url string, email string) *Contact {
+	return &Contact{Name: Ptr(name), URL: Ptr(url), Email: Ptr(email)}
+}
+
 type License struct {
 	Name string  `json:"name"`
 	ID   *string `json:"identifier,omitempty"` // OAS 3.1
 	URL  *string `json:"url,omitempty"`
+}
+
+func NewLicense(name string, urlAndEmail ...string) *License {
+	var id *string = nil
+	var url *string = nil
+	if len(urlAndEmail) >= 1 {
+		id = Ptr(urlAndEmail[0])
+	}
+	if len(urlAndEmail) >= 2 {
+		url = Ptr(urlAndEmail[1])
+	}
+	return &License{Name: name, ID: id, URL: url}
 }
 
 // Servers

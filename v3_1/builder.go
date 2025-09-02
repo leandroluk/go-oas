@@ -3,7 +3,16 @@ package oas
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
+
+func joinAndTrim(parts ...string) string {
+	cleaned := make([]string, 0, len(parts))
+	for _, p := range parts {
+		cleaned = append(cleaned, strings.TrimSpace(p))
+	}
+	return strings.Join(cleaned, " ")
+}
 
 // =======================
 // Root Builder
@@ -13,22 +22,52 @@ type Builder struct {
 	doc *Document
 }
 
-func NewBuilder(title, version string) *Builder {
+func NewBuilder() *Builder {
 	return &Builder{
 		doc: &Document{
-			OpenAPI: "3.1.0",
-			Info: Info{
-				Title:   title,
-				Version: version,
-			},
+			OpenAPI:    "3.1.0",
+			Info:       Info{},
 			Paths:      make(Paths),
 			Components: &Components{},
 		},
 	}
 }
 
-func (b *Builder) SetDescription(desc string) *Builder {
-	b.doc.Info.Description = &desc
+func (b *Builder) SetTitle(title string) *Builder {
+	b.doc.Info.Title = title
+	return b
+}
+
+func (b *Builder) SetVersion(version string) *Builder {
+	b.doc.Info.Version = version
+	return b
+}
+
+func (b *Builder) SetSummary(parts ...string) *Builder {
+	summary := joinAndTrim(parts...)
+	b.doc.Info.Summary = &summary
+	return b
+}
+
+func (b *Builder) SetDescription(parts ...string) *Builder {
+	description := joinAndTrim(parts...)
+	b.doc.Info.Description = &description
+	return b
+}
+
+func (b *Builder) SetTermsOfService(parts ...string) *Builder {
+	termsOfService := joinAndTrim(parts...)
+	b.doc.Info.TermsOfService = &termsOfService
+	return b
+}
+
+func (b *Builder) SetContact(contact *Contact) *Builder {
+	b.doc.Info.Contact = contact
+	return b
+}
+
+func (b *Builder) SetLicense(license License) *Builder {
+	b.doc.Info.License = &license
 	return b
 }
 

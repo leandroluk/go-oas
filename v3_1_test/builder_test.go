@@ -11,8 +11,14 @@ import (
 )
 
 func TestBuilder_FullSpec(t *testing.T) {
-	builder := oas.NewBuilder("Minha API", "1.0.0").
-		SetDescription("Exemplo de API completa gerada em runtime").
+	builder := oas.NewBuilder().
+		SetTitle("Minha API").
+		SetVersion("1.0.0").
+		SetSummary("Este é", "um summary com", "multiplas linhas").
+		SetDescription("Exemplo de API completa", " gerada em runtime").
+		SetTermsOfService("Este é", "um terms of service com", "multiplas linhas").
+		SetContact(oas.NewContact("nome", "http://example.com", "a@a.com")).
+		SetLicense(*oas.NewLicense("licença", "http://example.com", "a@a.com")).
 		AddServer("http://localhost:8080", "Servidor local").
 		AddSchema("User", oas.Schema{
 			Type: &oas.StringOrStringArray{One: oas.Ptr("object")},
@@ -72,13 +78,20 @@ func TestBuilder_FullSpec(t *testing.T) {
 	// valida que campos básicos existem
 	require.Equal(t, "3.1.0", doc.OpenAPI)
 	require.Equal(t, "Minha API", doc.Info.Title)
+	require.Equal(t, "Este é um summary com multiplas linhas", *doc.Info.Summary)
+	require.Equal(t, "Exemplo de API completa gerada em runtime", *doc.Info.Description)
+	require.Equal(t, "Este é um terms of service com multiplas linhas", *doc.Info.TermsOfService)
+	require.NotNil(t, doc.Info.Contact)
+	require.NotNil(t, doc.Info.License)
 	require.Contains(t, doc.Paths, "/users")
 	require.NotNil(t, doc.Components.Schemas["User"])
 	require.NotNil(t, doc.Components.SecuritySchemes["bearerAuth"])
 }
 
 func TestBuilder_ExtraCoverage(t *testing.T) {
-	b := oas.NewBuilder("API Extra", "1.0.0").
+	b := oas.NewBuilder().
+		SetTitle("API Extra").
+		SetVersion("1.0.0").
 		AddTag(oas.Tag{Name: "extra"}).
 		ExternalDocs("Docs", "https://example.com").
 		AddSecurityScheme("apiKeyAuth", oas.SecurityScheme{
@@ -145,7 +158,7 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 }
 
 func TestBuilder_DeletePatchAndExampleNilContent(t *testing.T) {
-	b := oas.NewBuilder("API", "1.0.0")
+	b := oas.NewBuilder().SetTitle("API").SetVersion("1.0.0")
 
 	// cria um DELETE com resposta JSON
 	pathBuilder := b.Path("/items/{id}")
@@ -186,7 +199,7 @@ func TestBuilder_DeletePatchAndExampleNilContent(t *testing.T) {
 }
 
 func TestBuilder_Path_MergeAndExampleNilContent(t *testing.T) {
-	b := oas.NewBuilder("API", "1.0.0")
+	b := oas.NewBuilder().SetTitle("API").SetVersion("1.0.0")
 
 	// Começa no mesmo path
 	pb := b.Path("/items/{id}")
