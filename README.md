@@ -4,7 +4,7 @@
 
 [![Build Status](https://github.com/leandroluk/go-oas/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/leandroluk/go-oas/actions)  
 [![Coverage Status](https://img.shields.io/codecov/c/github/leandroluk/go-oas/master.svg)](https://codecov.io/gh/leandroluk/go-oas)  
-[![Go Report Card](https://goreportcard.com/badge/github.com/leandroluk/go-oas)](https://goreportcard.com/report/github.com/leandroluk/go-oas)  
+[![Go Report Card](https://goreportcard.com/badge/github.com/leandroluk/go-oas??1)](https://goreportcard.com/report/github.com/leandroluk/go-oas?1)  
 [![Go Doc](https://godoc.org/github.com/leandroluk/go-oas?status.svg)](https://pkg.go.dev/github.com/leandroluk/go-oas)  
 [![Release](https://img.shields.io/github/release/leandroluk/go-oas.svg?style=flat-square)](https://github.com/leandroluk/go-oas/releases)  
 
