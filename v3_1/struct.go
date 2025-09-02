@@ -686,6 +686,15 @@ type Tag struct {
 	ExternalDocs *ExternalDocumentation `json:"externalDocs,omitempty"`
 }
 
+var (
+	TypeObject  = &StringOrArray{One: Ptr("object")}
+	TypeArray   = &StringOrArray{One: Ptr("array")}
+	TypeString  = &StringOrArray{One: Ptr("string")}
+	TypeInteger = &StringOrArray{One: Ptr("integer")}
+	TypeNumber  = &StringOrArray{One: Ptr("number")}
+	TypeBoolean = &StringOrArray{One: Ptr("boolean")}
+)
+
 // ========== JSON Schema (núcleo para 3.1) ==========
 
 // Schema representa o dialeto JSON Schema 2020-12 na medida necessária para OAS 3.1.
@@ -781,28 +790,4 @@ func (op *Operation) ValidateRequiredResponses() error {
 	}
 	sort.Strings(keys)
 	return nil
-}
-
-func NewObjectSchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("object")}}
-}
-
-func NewArraySchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("array")}}
-}
-
-func NewStringSchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("string")}}
-}
-
-func NewIntegerSchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("integer")}}
-}
-
-func NewNumberSchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("number")}}
-}
-
-func NewBooleanSchema() *Schema {
-	return &Schema{Type: &StringOrArray{One: Ptr("boolean")}}
 }
