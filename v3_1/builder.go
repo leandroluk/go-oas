@@ -236,7 +236,7 @@ func (ob *OperationBuilder) ParamCookie(name, typ, desc string, required bool) *
 }
 
 func (ob *OperationBuilder) addParam(name string, in ParameterIn, typ string, desc string, required bool) *OperationBuilder {
-	schema := Schema{Type: &StringOrStringArray{One: &typ}}
+	schema := Schema{Type: &StringOrArray{One: &typ}}
 	param := Parameter{
 		Name:        name,
 		In:          in,
@@ -279,7 +279,7 @@ func (ob *OperationBuilder) ResponseText(status int, desc string) *OperationBuil
 	resp := Response{
 		Description: desc,
 		Content: map[string]MediaType{
-			"text/plain": {Schema: &SchemaOrRef{Schema: &Schema{Type: &StringOrStringArray{One: Ptr("string")}}}},
+			"text/plain": {Schema: &SchemaOrRef{Schema: &Schema{Type: &StringOrArray{One: Ptr("string")}}}},
 		},
 	}
 	code := fmt.Sprintf("%d", status)

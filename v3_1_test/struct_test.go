@@ -11,7 +11,7 @@ import (
 func TestStringOrStringArray_JSON(t *testing.T) {
 	// string única
 	{
-		var s oas.StringOrStringArray
+		var s oas.StringOrArray
 		require.NoError(t, json.Unmarshal([]byte(`"foo"`), &s))
 		require.Equal(t, "foo", *s.One)
 		out, _ := json.Marshal(s)
@@ -19,7 +19,7 @@ func TestStringOrStringArray_JSON(t *testing.T) {
 	}
 	// array
 	{
-		var s oas.StringOrStringArray
+		var s oas.StringOrArray
 		require.NoError(t, json.Unmarshal([]byte(`["a","b"]`), &s))
 		require.Equal(t, []string{"a", "b"}, s.Many)
 		out, _ := json.Marshal(s)
@@ -27,7 +27,7 @@ func TestStringOrStringArray_JSON(t *testing.T) {
 	}
 	// inválido
 	{
-		var s oas.StringOrStringArray
+		var s oas.StringOrArray
 		err := json.Unmarshal([]byte(`123`), &s)
 		require.Error(t, err)
 	}
@@ -225,7 +225,7 @@ func TestRequestBodyOrRef_JSON(t *testing.T) {
 				Content: map[string]oas.MediaType{
 					"application/json": {
 						Schema: &oas.SchemaOrRef{Schema: &oas.Schema{
-							Type: &oas.StringOrStringArray{One: oas.Ptr("string")},
+							Type: &oas.StringOrArray{One: oas.Ptr("string")},
 						}},
 					},
 				},
@@ -498,4 +498,52 @@ func TestOperation_ValidateRequiredResponses(t *testing.T) {
 	}}
 	err = op.ValidateRequiredResponses()
 	require.NoError(t, err)
+}
+
+func TestNewObjectSchema(t *testing.T) {
+	s := oas.NewObjectSchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "object", *s.Type.One)
+	require.Nil(t, s.Type.Many)
+}
+
+func TestNewArraySchema(t *testing.T) {
+	s := oas.NewArraySchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "array", *s.Type.One)
+	require.Nil(t, s.Type.Many)
+}
+
+func TestNewStringSchema(t *testing.T) {
+	s := oas.NewStringSchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "string", *s.Type.One)
+	require.Nil(t, s.Type.Many)
+}
+
+func TestNewIntegerSchema(t *testing.T) {
+	s := oas.NewIntegerSchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "integer", *s.Type.One)
+	require.Nil(t, s.Type.Many)
+}
+
+func TestNewNumberSchema(t *testing.T) {
+	s := oas.NewNumberSchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "number", *s.Type.One)
+	require.Nil(t, s.Type.Many)
+}
+
+func TestNewBooleanSchema(t *testing.T) {
+	s := oas.NewBooleanSchema()
+	require.NotNil(t, s.Type)
+	require.NotNil(t, s.Type.One)
+	require.Equal(t, "boolean", *s.Type.One)
+	require.Nil(t, s.Type.Many)
 }

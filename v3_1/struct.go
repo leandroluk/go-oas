@@ -22,13 +22,13 @@ func isRefObject(raw map[string]any) (string, bool) {
 	return "", false
 }
 
-// StringOrStringArray aceita "type" como string ou []string (OpenAPI 3.1 / JSON Schema 2020-12).
-type StringOrStringArray struct {
+// StringOrArray aceita "type" como string ou []string (OpenAPI 3.1 / JSON Schema 2020-12).
+type StringOrArray struct {
 	One  *string
 	Many []string
 }
 
-func (t *StringOrStringArray) UnmarshalJSON(b []byte) error {
+func (t *StringOrArray) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err == nil {
 		t.One = &s
@@ -42,7 +42,7 @@ func (t *StringOrStringArray) UnmarshalJSON(b []byte) error {
 	return errors.New("StringOrStringArray: valor deve ser string ou []string")
 }
 
-func (t StringOrStringArray) MarshalJSON() ([]byte, error) {
+func (t StringOrArray) MarshalJSON() ([]byte, error) {
 	if t.One != nil {
 		return json.Marshal(*t.One)
 	}
@@ -701,9 +701,9 @@ type Schema struct {
 	Examples    []any   `json:"examples,omitempty"`
 
 	// Tipos
-	Type  *StringOrStringArray `json:"type,omitempty"`
-	Enum  []any                `json:"enum,omitempty"`
-	Const any                  `json:"const,omitempty"`
+	Type  *StringOrArray `json:"type,omitempty"`
+	Enum  []any          `json:"enum,omitempty"`
+	Const any            `json:"const,omitempty"`
 
 	// Combinações
 	AllOf []SchemaOrRef `json:"allOf,omitempty"`
@@ -781,4 +781,28 @@ func (op *Operation) ValidateRequiredResponses() error {
 	}
 	sort.Strings(keys)
 	return nil
+}
+
+func NewObjectSchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("object")}}
+}
+
+func NewArraySchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("array")}}
+}
+
+func NewStringSchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("string")}}
+}
+
+func NewIntegerSchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("integer")}}
+}
+
+func NewNumberSchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("number")}}
+}
+
+func NewBooleanSchema() *Schema {
+	return &Schema{Type: &StringOrArray{One: Ptr("boolean")}}
 }

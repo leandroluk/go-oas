@@ -21,10 +21,10 @@ func TestBuilder_FullSpec(t *testing.T) {
 		SetLicense(*oas.NewLicense("licença", "http://example.com", "a@a.com")).
 		AddServer("http://localhost:8080", "Servidor local").
 		AddSchema("User", oas.Schema{
-			Type: &oas.StringOrStringArray{One: oas.Ptr("object")},
+			Type: &oas.StringOrArray{One: oas.Ptr("object")},
 			Properties: map[string]oas.SchemaOrRef{
-				"id":   {Schema: &oas.Schema{Type: &oas.StringOrStringArray{One: oas.Ptr("integer")}}},
-				"name": {Schema: &oas.Schema{Type: &oas.StringOrStringArray{One: oas.Ptr("string")}}},
+				"id":   {Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("integer")}}},
+				"name": {Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("string")}}},
 			},
 			Required: []string{"id", "name"},
 		}).
@@ -42,7 +42,7 @@ func TestBuilder_FullSpec(t *testing.T) {
 		ParamQuery("limit", "integer", "Número de resultados", false).
 		ResponseJSON(200, "OK", oas.SchemaOrRef{
 			Schema: &oas.Schema{
-				Type:  &oas.StringOrStringArray{One: oas.Ptr("array")},
+				Type:  &oas.StringOrArray{One: oas.Ptr("array")},
 				Items: &oas.Items{Single: &oas.SchemaOrRef{Ref: &oas.Reference{Ref: "#/components/schemas/User"}}},
 			},
 		}).
@@ -113,11 +113,11 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 		ParamHeader("X-Custom", "string", "Header custom", false).
 		ParamCookie("session", "string", "Sessão", true).
 		RequestJSON(oas.SchemaOrRef{
-			Schema: &oas.Schema{Type: &oas.StringOrStringArray{One: oas.Ptr("object")}},
+			Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("object")}},
 		}, true).
 		ResponseText(204, "Sem conteúdo").
 		ResponseWithHeaders(200, "OK com header",
-			oas.SchemaOrRef{Schema: &oas.Schema{Type: &oas.StringOrStringArray{One: oas.Ptr("string")}}},
+			oas.SchemaOrRef{Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("string")}}},
 			map[string]oas.Header{
 				"X-Rate-Limit": {Description: oas.Ptr("limite")},
 			},
