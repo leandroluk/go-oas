@@ -697,6 +697,14 @@ var (
 
 // ========== JSON Schema (núcleo para 3.1) ==========
 
+type AllOf []SchemaOrRef
+type OneOf []SchemaOrRef
+type AnyOf []SchemaOrRef
+type PrefixItems []SchemaOrRef
+type Properties map[string]SchemaOrRef
+type Required []string
+type PatternProperties map[string]SchemaOrRef
+
 // Schema representa o dialeto JSON Schema 2020-12 na medida necessária para OAS 3.1.
 // (Campos menos comuns podem ser adicionados no mesmo padrão.)
 type Schema struct {
@@ -715,28 +723,28 @@ type Schema struct {
 	Const any            `json:"const,omitempty"`
 
 	// Combinações
-	AllOf []SchemaOrRef `json:"allOf,omitempty"`
-	OneOf []SchemaOrRef `json:"oneOf,omitempty"`
-	AnyOf []SchemaOrRef `json:"anyOf,omitempty"`
-	Not   *SchemaOrRef  `json:"not,omitempty"`
+	AllOf AllOf         `json:"allOf,omitempty"`
+	OneOf OneOf         `json:"oneOf,omitempty"`
+	AnyOf AnyOf         `json:"anyOf,omitempty"`
+	Not   []SchemaOrRef `json:"not,omitempty"`
 
 	// Objetos
-	Properties           map[string]SchemaOrRef `json:"properties,omitempty"`
-	Required             []string               `json:"required,omitempty"`
-	AdditionalProperties *AdditionalProperties  `json:"additionalProperties,omitempty"`
-	PatternProperties    map[string]SchemaOrRef `json:"patternProperties,omitempty"`
-	MinProperties        *int                   `json:"minProperties,omitempty"`
-	MaxProperties        *int                   `json:"maxProperties,omitempty"`
+	Properties           Properties            `json:"properties,omitempty"`
+	Required             []string              `json:"required,omitempty"`
+	AdditionalProperties *AdditionalProperties `json:"additionalProperties,omitempty"`
+	PatternProperties    PatternProperties     `json:"patternProperties,omitempty"`
+	MinProperties        *int                  `json:"minProperties,omitempty"`
+	MaxProperties        *int                  `json:"maxProperties,omitempty"`
 
 	// Arrays
-	Items       *Items        `json:"items,omitempty"`
-	PrefixItems []SchemaOrRef `json:"prefixItems,omitempty"` // JSON Schema 2020-12
-	MinItems    *int          `json:"minItems,omitempty"`
-	MaxItems    *int          `json:"maxItems,omitempty"`
-	UniqueItems *bool         `json:"uniqueItems,omitempty"`
-	Contains    *SchemaOrRef  `json:"contains,omitempty"`
-	MinContains *int          `json:"minContains,omitempty"`
-	MaxContains *int          `json:"maxContains,omitempty"`
+	Items       *Items       `json:"items,omitempty"`
+	PrefixItems PrefixItems  `json:"prefixItems,omitempty"` // JSON Schema 2020-12
+	MinItems    *int         `json:"minItems,omitempty"`
+	MaxItems    *int         `json:"maxItems,omitempty"`
+	UniqueItems *bool        `json:"uniqueItems,omitempty"`
+	Contains    *SchemaOrRef `json:"contains,omitempty"`
+	MinContains *int         `json:"minContains,omitempty"`
+	MaxContains *int         `json:"maxContains,omitempty"`
 
 	// Strings
 	MinLength *int    `json:"minLength,omitempty"`
@@ -758,10 +766,12 @@ type Schema struct {
 	// Extensões "x-*" ficam livres no nível de uso (MapStringAny) quando necessário.
 }
 
+type Mapping map[string]string
+
 // Discriminator (OAS)
 type Discriminator struct {
-	PropertyName string            `json:"propertyName"`
-	Mapping      map[string]string `json:"mapping,omitempty"`
+	PropertyName string  `json:"propertyName"`
+	Mapping      Mapping `json:"mapping,omitempty"`
 }
 
 // XML (OAS)
