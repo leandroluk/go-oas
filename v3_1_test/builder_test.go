@@ -116,6 +116,7 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 			Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("object")}},
 		}, true).
 		ResponseText(204, "Sem conteúdo").
+		ResponseStatus(218, "This is fine").
 		ResponseWithHeaders(200, "OK com header",
 			oas.SchemaOrRef{Schema: &oas.Schema{Type: &oas.StringOrArray{One: oas.Ptr("string")}}},
 			map[string]oas.Header{

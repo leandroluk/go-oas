@@ -296,6 +296,13 @@ func (ob *OperationBuilder) RequestJSON(schema SchemaOrRef, required bool) *Oper
 
 // ---------------- Responses -----------------
 
+func (ob *OperationBuilder) ResponseStatus(status int, desc string) *OperationBuilder {
+	resp := Response{Description: desc}
+	code := fmt.Sprintf("%d", status)
+	ob.op.Responses[code] = ResponseOrRef{Resp: &resp}
+	return ob
+}
+
 func (ob *OperationBuilder) ResponseJSON(status int, desc string, schema SchemaOrRef) *OperationBuilder {
 	resp := Response{
 		Description: desc,
