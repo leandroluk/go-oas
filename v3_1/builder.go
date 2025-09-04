@@ -185,38 +185,71 @@ type OperationBuilder struct {
 	op          *Operation
 }
 
-func (ob *OperationBuilder) DoneOp() *PathBuilder {
-	return ob.pathBuilder
-}
-
-func (ob *OperationBuilder) Summary(s string) *OperationBuilder {
-	ob.op.Summary = &s
-	return ob
-}
-
-func (ob *OperationBuilder) Description(d string) *OperationBuilder {
-	ob.op.Description = &d
-	return ob
-}
-
-func (ob *OperationBuilder) Deprecated() *OperationBuilder {
-	val := true
-	ob.op.Deprecated = &val
-	return ob
-}
-
-func (ob *OperationBuilder) Tag(tag string) *OperationBuilder {
+func (ob *OperationBuilder) AddTag(tag string) *OperationBuilder {
 	ob.op.Tags = append(ob.op.Tags, tag)
 	return ob
 }
 
-func (ob *OperationBuilder) ExternalDocs(desc, url string) *OperationBuilder {
+func (ob *OperationBuilder) SetSummary(s string) *OperationBuilder {
+	ob.op.Summary = &s
+	return ob
+}
+
+func (ob *OperationBuilder) SetDescription(d string) *OperationBuilder {
+	ob.op.Description = &d
+	return ob
+}
+
+func (ob *OperationBuilder) SetExternalDocs(desc, url string) *OperationBuilder {
 	ob.op.ExternalDocs = &ExternalDocumentation{Description: &desc, URL: url}
 	return ob
 }
 
-func (ob *OperationBuilder) Security(req SecurityRequirement) *OperationBuilder {
+func (ob *OperationBuilder) SetOperationID(id string) *OperationBuilder {
+	ob.op.OperationID = &id
+	return ob
+}
+
+func (ob *OperationBuilder) SetParameters(params ...ParameterOrRef) *OperationBuilder {
+	ob.op.Parameters = append(ob.op.Parameters, params...)
+	return ob
+}
+
+func (ob *OperationBuilder) SetRequestBody(rb RequestBodyOrRef) *OperationBuilder {
+	ob.op.RequestBody = &rb
+	return ob
+}
+
+func (ob *OperationBuilder) AddSecurity(req SecurityRequirement) *OperationBuilder {
 	ob.op.Security = append(ob.op.Security, req)
+	return ob
+}
+
+func (ob *OperationBuilder) SetResponses(resps Responses) *OperationBuilder {
+	for k, v := range resps {
+		ob.op.Responses[k] = v
+	}
+	return ob
+}
+
+func (ob *OperationBuilder) AddServer(url, description string) *OperationBuilder {
+	if ob.op.Servers == nil {
+		ob.op.Servers = make([]Server, 0)
+	}
+	ob.op.Servers = append(ob.op.Servers, Server{
+		URL:         url,
+		Description: &description,
+	})
+	return ob
+}
+
+func (ob *OperationBuilder) DoneOp() *PathBuilder {
+	return ob.pathBuilder
+}
+
+func (ob *OperationBuilder) SetDeprecated() *OperationBuilder {
+	val := true
+	ob.op.Deprecated = &val
 	return ob
 }
 

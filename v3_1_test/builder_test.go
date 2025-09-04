@@ -38,7 +38,7 @@ func TestBuilder_FullSpec(t *testing.T) {
 		ExternalDocs("Docs externos", "https://example.com/docs").
 		Path("/users").
 		Get("Lista usuários").
-		Tag("users").
+		AddTag("users").
 		ParamQuery("limit", "integer", "Número de resultados", false).
 		ResponseJSON(200, "OK", oas.SchemaOrRef{
 			Schema: &oas.Schema{
@@ -55,7 +55,7 @@ func TestBuilder_FullSpec(t *testing.T) {
 		}).
 		DoneOp().
 		Post("Cria usuário").
-		Tag("users").
+		AddTag("users").
 		RequestJSON(oas.SchemaOrRef{Ref: &oas.Reference{Ref: "#/components/schemas/User"}}, true).
 		ResponseJSON(201, "Criado", oas.SchemaOrRef{Ref: &oas.Reference{Ref: "#/components/schemas/User"}}).
 		Link(201, "GetUserById", oas.Link{
@@ -104,11 +104,11 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 	// PUT /items
 	b.Path("/items").
 		Put("Atualiza item").
-		Summary("Sumário").
-		Description("Descrição").
-		Deprecated().
-		ExternalDocs("Op docs", "https://op.example.com").
-		Security(oas.SecurityRequirement{"apiKeyAuth": {}}).
+		SetSummary("Sumário").
+		SetDescription("Descrição").
+		SetDeprecated().
+		SetExternalDocs("Op docs", "https://op.example.com").
+		AddSecurity(oas.SecurityRequirement{"apiKeyAuth": {}}).
 		ParamPath("id", "string", "ID do item").
 		ParamHeader("X-Custom", "string", "Header custom", false).
 		ParamCookie("session", "string", "Sessão", true).
@@ -250,4 +250,46 @@ func TestBuilder_Path_MergeAndExampleNilContent(t *testing.T) {
 	require.NotNil(t, mt.Examples)
 	_, has := mt.Examples["example"]
 	require.True(t, has, "example key not found in mediaType examples")
+}
+
+func TestBuilder_NewSetters(t *testing.T) {
+	b := oas.NewBuilder().SetTitle("API Setters").SetVersion("2.0.0")
+
+	// cria um GET e usa os novos setters
+	b.Path("/setters").
+		Get("Operation with setters").
+		SetOperationID("op123").
+		SetParameters(
+			oas.ParameterOrRef{Param: &oas.Parameter{Name: "foo", In: oas.InQuery}},
+			oas.ParameterOrRef{Param: &oas.Parameter{Name: "bar", In: oas.InHeader}},
+		).
+		SetRequestBody(oas.RequestBodyOrRef{
+			Body: &oas.RequestBody{
+				Description: oas.Ptr("body desc"),
+				Required:    oas.Ptr(true),
+			},
+		}).
+		SetResponses(oas.Responses{
+			"400": {Resp: &oas.Response{Description: "bad request"}},
+			"500": {Resp: &oas.Response{Description: "internal error"}},
+		}).
+		AddServer("http://op.example.com", "op server").
+		DoneOp().
+		DonePath()
+
+	data, err := b.JSON()
+	require.NoError(t, err)
+
+	var doc oas.Document
+	require.NoError(t, json.Unmarshal(data, &doc))
+
+	op := doc.Paths["/setters"].PathItem.Get
+	require.NotNil(t, op)
+	require.Equal(t, "op123", *op.OperationID)
+	require.Len(t, op.Parameters, 2)
+	require.NotNil(t, op.RequestBody)
+	require.Contains(t, op.Responses, "400")
+	require.Contains(t, op.Responses, "500")
+	require.Len(t, op.Servers, 1)
+	require.Equal(t, "http://op.example.com", op.Servers[0].URL)
 }
