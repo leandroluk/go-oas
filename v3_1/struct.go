@@ -700,37 +700,40 @@ var (
 type AllOf []SchemaOrRef
 type OneOf []SchemaOrRef
 type AnyOf []SchemaOrRef
+type Not []SchemaOrRef
 type PrefixItems []SchemaOrRef
 type Properties map[string]SchemaOrRef
 type Required []string
+type Examples []any
+type Enum []any
 type PatternProperties map[string]SchemaOrRef
 
 // Schema representa o dialeto JSON Schema 2020-12 na medida necessária para OAS 3.1.
 // (Campos menos comuns podem ser adicionados no mesmo padrão.)
 type Schema struct {
 	// Meta
-	Title       *string `json:"title,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Default     any     `json:"default,omitempty"`
-	Deprecated  *bool   `json:"deprecated,omitempty"`
-	ReadOnly    *bool   `json:"readOnly,omitempty"`
-	WriteOnly   *bool   `json:"writeOnly,omitempty"`
-	Examples    []any   `json:"examples,omitempty"`
+	Title       *string  `json:"title,omitempty"`
+	Description *string  `json:"description,omitempty"`
+	Default     any      `json:"default,omitempty"`
+	Deprecated  *bool    `json:"deprecated,omitempty"`
+	ReadOnly    *bool    `json:"readOnly,omitempty"`
+	WriteOnly   *bool    `json:"writeOnly,omitempty"`
+	Examples    Examples `json:"examples,omitempty"`
 
 	// Tipos
 	Type  *StringOrArray `json:"type,omitempty"`
-	Enum  []any          `json:"enum,omitempty"`
+	Enum  Enum           `json:"enum,omitempty"`
 	Const any            `json:"const,omitempty"`
 
 	// Combinações
-	AllOf AllOf         `json:"allOf,omitempty"`
-	OneOf OneOf         `json:"oneOf,omitempty"`
-	AnyOf AnyOf         `json:"anyOf,omitempty"`
-	Not   []SchemaOrRef `json:"not,omitempty"`
+	AllOf AllOf `json:"allOf,omitempty"`
+	OneOf OneOf `json:"oneOf,omitempty"`
+	AnyOf AnyOf `json:"anyOf,omitempty"`
+	Not   Not   `json:"not,omitempty"`
 
 	// Objetos
 	Properties           Properties            `json:"properties,omitempty"`
-	Required             []string              `json:"required,omitempty"`
+	Required             Required              `json:"required,omitempty"`
 	AdditionalProperties *AdditionalProperties `json:"additionalProperties,omitempty"`
 	PatternProperties    PatternProperties     `json:"patternProperties,omitempty"`
 	MinProperties        *int                  `json:"minProperties,omitempty"`
