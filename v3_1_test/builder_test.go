@@ -3,6 +3,7 @@ package oas_test
 import (
 	"encoding/json"
 	"fmt"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -88,8 +89,15 @@ func TestBuilder_FullSpec(t *testing.T) {
 	require.NotNil(t, doc.Components.SecuritySchemes["bearerAuth"])
 }
 
+var reParamFiber = regexp.MustCompile(`:(\w+)`)
+
+func fiberToOAS(path string) string {
+	return reParamFiber.ReplaceAllString(path, `{$1}`)
+}
+
 func TestBuilder_ExtraCoverage(t *testing.T) {
 	b := oas.NewBuilder().
+		WithPathFactory(fiberToOAS).
 		SetTitle("API Extra").
 		SetVersion("1.0.0").
 		AddTag(oas.Tag{Name: "extra"}).

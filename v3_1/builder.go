@@ -18,8 +18,11 @@ func joinAndTrim(parts ...string) string {
 // Root Builder
 // =======================
 
+type PathFactory func(string) string
+
 type Builder struct {
-	doc *Document
+	doc         *Document
+	pathFactory PathFactory
 }
 
 func NewBuilder() *Builder {
@@ -30,7 +33,13 @@ func NewBuilder() *Builder {
 			Paths:      make(Paths),
 			Components: &Components{},
 		},
+		pathFactory: func(p string) string { return p },
 	}
+}
+
+func (b *Builder) WithPathFactory(factory PathFactory) *Builder {
+	b.pathFactory = factory
+	return b
 }
 
 func (b *Builder) SetTitle(title string) *Builder {
@@ -111,13 +120,14 @@ func (b *Builder) ExternalDocs(desc, url string) *Builder {
 }
 
 func (b *Builder) Path(path string) *PathBuilder {
-	piRef, ok := b.doc.Paths[path]
+	normalized := b.pathFactory(path)
+	piRef, ok := b.doc.Paths[normalized]
 	if !ok || piRef.PathItem == nil {
 		pi := &PathItem{}
-		b.doc.Paths[path] = PathItemOrRef{PathItem: pi}
-		return &PathBuilder{builder: b, path: path, item: pi}
+		b.doc.Paths[normalized] = PathItemOrRef{PathItem: pi}
+		return &PathBuilder{builder: b, path: normalized, item: pi}
 	}
-	return &PathBuilder{builder: b, path: path, item: piRef.PathItem}
+	return &PathBuilder{builder: b, path: normalized, item: piRef.PathItem}
 }
 
 func (b *Builder) Build() *Document {
