@@ -116,7 +116,7 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 		SetDescription("Descrição").
 		SetDeprecated().
 		SetExternalDocs("Op docs", "https://op.example.com").
-		AddSecurity(oas.SecurityRequirement{"apiKeyAuth": {}}).
+		AddSecurity("apiKeyAuth").
 		ParamPath("id", "string", "ID do item").
 		ParamHeader("X-Custom", "string", "Header custom", false).
 		ParamCookie("session", "string", "Sessão", true).

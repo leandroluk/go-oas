@@ -230,8 +230,8 @@ func (ob *OperationBuilder) SetRequestBody(rb RequestBodyOrRef) *OperationBuilde
 	return ob
 }
 
-func (ob *OperationBuilder) AddSecurity(req SecurityRequirement) *OperationBuilder {
-	ob.op.Security = append(ob.op.Security, req)
+func (ob *OperationBuilder) AddSecurity(scheme string) *OperationBuilder {
+	ob.op.Security = append(ob.op.Security, SecurityRequirement{scheme: []string{}})
 	return ob
 }
 
