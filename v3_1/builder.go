@@ -266,16 +266,16 @@ func (ob *OperationBuilder) SetDeprecated() *OperationBuilder {
 // ---------------- Params -----------------
 
 func (ob *OperationBuilder) ParamQuery(name, typ, desc string, required bool) *OperationBuilder {
-	return ob.addParam(name, InQuery, typ, desc, required)
+	return ob.addParam(name, ParameterInQuery, typ, desc, required)
 }
 func (ob *OperationBuilder) ParamPath(name, typ, desc string) *OperationBuilder {
-	return ob.addParam(name, InPath, typ, desc, true)
+	return ob.addParam(name, ParameterInPath, typ, desc, true)
 }
 func (ob *OperationBuilder) ParamHeader(name, typ, desc string, required bool) *OperationBuilder {
-	return ob.addParam(name, InHeader, typ, desc, required)
+	return ob.addParam(name, ParameterInHeader, typ, desc, required)
 }
 func (ob *OperationBuilder) ParamCookie(name, typ, desc string, required bool) *OperationBuilder {
-	return ob.addParam(name, InCookie, typ, desc, required)
+	return ob.addParam(name, ParameterInCookie, typ, desc, required)
 }
 
 func (ob *OperationBuilder) addParam(name string, in ParameterIn, typ string, desc string, required bool) *OperationBuilder {

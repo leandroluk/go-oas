@@ -105,7 +105,7 @@ func TestBuilder_ExtraCoverage(t *testing.T) {
 		AddSecurityScheme("apiKeyAuth", oas.SecurityScheme{
 			Type: "apiKey",
 			Name: oas.Ptr("X-API-Key"),
-			In:   oas.InHeader,
+			In:   oas.ParameterInHeader,
 		}).
 		Security(oas.SecurityRequirement{"apiKeyAuth": {}})
 
@@ -269,8 +269,8 @@ func TestBuilder_NewSetters(t *testing.T) {
 		Get("Operation with setters").
 		SetOperationID("op123").
 		SetParameters(
-			oas.ParameterOrRef{Param: &oas.Parameter{Name: "foo", In: oas.InQuery}},
-			oas.ParameterOrRef{Param: &oas.Parameter{Name: "bar", In: oas.InHeader}},
+			oas.ParameterOrRef{Param: &oas.Parameter{Name: "foo", In: oas.ParameterInQuery}},
+			oas.ParameterOrRef{Param: &oas.Parameter{Name: "bar", In: oas.ParameterInHeader}},
 		).
 		SetRequestBody(oas.RequestBodyOrRef{
 			Body: &oas.RequestBody{

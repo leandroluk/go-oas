@@ -179,7 +179,7 @@ func TestParameterOrRef_JSON(t *testing.T) {
 	}
 	// branch Marshal com Param
 	{
-		pr := oas.ParameterOrRef{Param: &oas.Parameter{Name: "q", In: oas.InQuery}}
+		pr := oas.ParameterOrRef{Param: &oas.Parameter{Name: "q", In: oas.ParameterInQuery}}
 		out, err := json.Marshal(pr)
 		require.NoError(t, err)
 		require.Contains(t, string(out), `"q"`)
@@ -479,6 +479,30 @@ func TestSecuritySchemeOrRef_JSON(t *testing.T) {
 		err := json.Unmarshal(data, &s)
 		require.Error(t, err)
 	}
+}
+
+func TestNewSecuritySchemeAndWithMethods(t *testing.T) {
+	// cria via construtor
+	s := oas.NewSecurityScheme(oas.SecuritySchemeTypeApiKey).
+		WithName("x-api-key").
+		WithParameter(oas.ParameterInHeader).
+		WithDescription("API Key necessária")
+
+	require.Equal(t, oas.SecuritySchemeTypeApiKey, s.Type)
+	require.NotNil(t, s.Name)
+	require.Equal(t, "x-api-key", *s.Name)
+	require.Equal(t, oas.ParameterInHeader, s.In)
+	require.NotNil(t, s.Description)
+	require.Equal(t, "API Key necessária", *s.Description)
+
+	// serializa pra JSON e valida conteúdo
+	data, err := json.Marshal(s)
+	require.NoError(t, err)
+	out := string(data)
+	require.Contains(t, out, `"apiKey"`)
+	require.Contains(t, out, `"x-api-key"`)
+	require.Contains(t, out, `"header"`)
+	require.Contains(t, out, `"API Key necessária"`)
 }
 
 func TestOperation_ValidateRequiredResponses(t *testing.T) {

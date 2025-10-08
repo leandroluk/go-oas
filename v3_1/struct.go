@@ -280,10 +280,10 @@ type ExternalDocumentation struct {
 type ParameterIn string
 
 const (
-	InQuery  ParameterIn = "query"
-	InHeader ParameterIn = "header"
-	InPath   ParameterIn = "path"
-	InCookie ParameterIn = "cookie"
+	ParameterInQuery  ParameterIn = "query"
+	ParameterInHeader ParameterIn = "header"
+	ParameterInPath   ParameterIn = "path"
+	ParameterInCookie ParameterIn = "cookie"
 )
 
 type ParameterStyle string
@@ -609,11 +609,11 @@ type SecurityRequirement map[string][]string
 type SecuritySchemeType string
 
 const (
-	SecAPIKey        SecuritySchemeType = "apiKey"
-	SecHTTP          SecuritySchemeType = "http"
-	SecMutualTLS     SecuritySchemeType = "mutualTLS"
-	SecOAuth2        SecuritySchemeType = "oauth2"
-	SecOpenIDConnect SecuritySchemeType = "openIdConnect"
+	SecuritySchemeTypeApiKey        SecuritySchemeType = "apiKey"
+	SecuritySchemeTypeHTTP          SecuritySchemeType = "http"
+	SecuritySchemeTypeMutualTLS     SecuritySchemeType = "mutualTLS"
+	SecuritySchemeTypeOAuth2        SecuritySchemeType = "oauth2"
+	SecuritySchemeTypeOpenIDConnect SecuritySchemeType = "openIdConnect"
 )
 
 type SecurityScheme struct {
@@ -633,6 +633,27 @@ type SecurityScheme struct {
 
 	// openIdConnect
 	OpenIDConnectURL *string `json:"openIdConnectUrl,omitempty"`
+}
+
+func NewSecurityScheme(t SecuritySchemeType) SecurityScheme {
+	return SecurityScheme{
+		Type: t,
+	}
+}
+
+func (s SecurityScheme) WithName(name string) SecurityScheme {
+	s.Name = &name
+	return s
+}
+
+func (s SecurityScheme) WithParameter(in ParameterIn) SecurityScheme {
+	s.In = in
+	return s
+}
+
+func (s SecurityScheme) WithDescription(desc string) SecurityScheme {
+	s.Description = &desc
+	return s
 }
 
 type SecuritySchemeOrRef struct {
